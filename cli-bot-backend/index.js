@@ -3,7 +3,11 @@ import express from "express";
 import OpenAI from "openai";
 import cors from "cors";  // ✅ Import CORS
 
-dotenv.config();
+// Load the .env file from the parent directory
+dotenv.config({ path: "../.env" });
+
+console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
+
 
 const app = express();
 app.use(express.json()); // Built-in body parser for JSON in Express
