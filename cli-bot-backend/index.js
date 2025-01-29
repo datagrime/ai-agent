@@ -8,14 +8,24 @@ dotenv.config({ path: "../.env" });
 
 console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
 
-
 const app = express();
 app.use(express.json()); // Built-in body parser for JSON in Express
 
-// ✅ Enable CORS for requests from the frontend
+// ✅ Dynamic CORS: Allow localhost in development & frontend domain in production
+const allowedOrigins = [
+    "http://localhost:5500",  // ✅ Local development
+    "https://ai-agent-frontend-86vq.onrender.com" // ✅ Deployed frontend URL
+];
+
 app.use(
     cors({
-        origin: "http://localhost:5500", // Allow frontend on port 5500
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("CORS policy does not allow this origin"));
+            }
+        },
         methods: ["GET", "POST"], // Allow only GET and POST requests
         allowedHeaders: ["Content-Type"], // Allow Content-Type headers
     })
@@ -52,4 +62,4 @@ app.post("/api/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
