@@ -1,5 +1,5 @@
 const PROMPT = '> ';
-const API_URL = 'http://localhost:3000/api/chat';
+const API_URL = 'https://ai-agent-uggb.onrender.com/api/chat';
 
 // Initialize terminal
 const terminalContainer = document.getElementById('terminal-container');
