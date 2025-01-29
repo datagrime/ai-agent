@@ -80,13 +80,29 @@ async function loadGreeting() {
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const { reply } = await response.json();
-        term.writeln(reply); // Print AI's greeting message
+
+        // **Simulate typing effect instead of displaying all at once**
+        await typeText(reply);
+
     } catch (error) {
         term.writeln("\r\x1b[K\x1b[31m[Error]\x1b[0m Failed to load greeting.");
     } finally {
-        term.write(PROMPT);
+        term.write("\r\n" + PROMPT);
     }
 }
+
+/**
+ * Simulates typing effect by printing text one character at a time.
+ * @param {string} text - The text to type out.
+ * @param {number} delay - Typing speed in milliseconds (default 50ms).
+ */
+async function typeText(text, delay = 50) {
+    for (const char of text) {
+        term.write(char);
+        await new Promise(resolve => setTimeout(resolve, delay)); // Simulate typing delay
+    }
+}
+
 
 // Load greeting when the terminal initializes
 loadGreeting();
