@@ -14,7 +14,8 @@ app.use(express.json()); // Built-in body parser for JSON in Express
 // ✅ Dynamic CORS: Allow localhost in development & frontend domain in production
 const allowedOrigins = [
     "http://localhost:5500",  // ✅ Local development
-    "https://ai-agent-frontend-86vq.onrender.com" // ✅ Deployed frontend URL
+    "https://ai-agent-frontend-86vq.onrender.com",
+    "https://www.alexmay.dev"
 ];
 
 app.use(
