@@ -6,11 +6,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="black.svg">
     <title>alexmay.dev</title>
-    
+
     <!-- Xterm.js Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css">
 
     <style>
+        /* Base styles */
         body, html {
             margin: 0;
             padding: 0;
@@ -31,6 +32,21 @@
         justify-content: flex-start;  /* Keep content left-aligned */
         padding-left: 50px; /* Apply left padding only */
         box-sizing: border-box; /* Ensures padding doesn't cause overflow */
+        }
+
+
+        /* Mobile-specific styling */
+        @media (max-width: 768px) {
+            body {
+                justify-content: flex-start;  /* Keep content left-aligned */
+                align-items: flex-start;  /* Keep content aligned to the top */
+            }
+            
+            #terminal-container {
+                width: 95vw;
+                height: 90vh;
+                padding: 10px;
+            }
         }
     </style>
 </head>

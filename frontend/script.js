@@ -6,6 +6,11 @@ const terminalContainer = document.getElementById('terminal-container');
 const { Terminal } = window;
 const FitAddon = window.FitAddon?.FitAddon || window.FitAddon;
 
+// Function to check if the device is mobile
+function isMobile() {
+    return window.innerWidth < 768;
+}
+
 const term = new Terminal({
     convertEol: true,
     scrollback: 100,
@@ -34,7 +39,10 @@ const asciiArt = `
                                  
                                                         \x1b[0m`;
 
-term.writeln(asciiArt);
+// Display ASCII art only on desktop
+if (!isMobile()) {
+    term.writeln(asciiArt);
+}
 term.write(PROMPT);
 
 let userInput = '';
