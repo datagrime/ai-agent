@@ -26,7 +26,7 @@ fitAddon.fit();
 window.addEventListener('resize', () => fitAddon.fit());
 
 // Initial welcome message
-term.writeln('Hello, welcome to Alex\'s playground. How can I help you?');
+term.writeln('Hello, welcome to Alex\'s dev environment. How can I help you?');
 term.write(PROMPT);
 
 let userInput = '';
