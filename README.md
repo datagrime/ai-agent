@@ -26,7 +26,7 @@ cd ai-agent
 
 ### 3️⃣ Install Backend Dependencies
 ```sh
-cd cli-bot-backend
+cd backend
 npm install
 ```
 
@@ -39,7 +39,7 @@ The backend should now be running at `http://localhost:3000/`.
 ### 5 Start the Frontend Server
 Open a new terminal and run:
 ```sh
-cd cli-bot-frontend
+cd frontend
 python3 -m http.server 5500
 ```
 The frontend should now be accessible at `http://localhost:5500/`.

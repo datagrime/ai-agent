@@ -1,7 +1,7 @@
+const INTRO_PROMPT =''
 const PROMPT = '> ';
 const API_URL = 'https://ai-agent-uggb.onrender.com/api/chat';
 
-// Initialize terminal
 const terminalContainer = document.getElementById('terminal-container');
 const { Terminal } = window;
 const FitAddon = window.FitAddon?.FitAddon || window.FitAddon;
@@ -22,49 +22,75 @@ term.loadAddon(fitAddon);
 term.open(terminalContainer);
 fitAddon.fit();
 
-// Auto-resize terminal on window resize
 window.addEventListener('resize', () => fitAddon.fit());
 
-// Initial welcome message
-term.writeln('Hello, welcome to Alex\'s dev environment. How can I help you?');
+const asciiArt = `
+\x1b[29m         __                                     __         
+  ____ _/ /__  _  ______ ___  ____ ___  __ ____/ /__ _   __
+ / __ \`/ / _ \\| |/_/ __ \`__ \\/ __ \`/ / / // __  / _ \\ | / /
+/ /_/ / /  __/>  </ / / / / / /_/ / /_/ // /_/ /  __/ |/ / 
+\\__,_/_/\\___/_/|_/_/ /_/ /_/\\__,_/\\__, (_)__,_/\\___/|___/  
+                                 /____/                     
+                                 
+                                                        \x1b[0m`;
+
+term.writeln(asciiArt);
 term.write(PROMPT);
 
 let userInput = '';
-let isProcessing = false; // Track ongoing requests
+let isProcessing = false;
 
-// Efficient text wrapping function
-function splitTextIntoLines(text, width) {
-    return text.match(new RegExp(`.{1,${width}}`, 'g')) || [text];
-}
-
-// Handle user input
 term.onData(async (data) => {
-    if (isProcessing) return; // Ignore input during processing
+    if (isProcessing) return;
 
     switch (data) {
-        case '\r': // Enter key
+        case '\r':
             await handleUserInput();
             break;
-
-        case '\x7F': // Backspace (DEL)
+        case '\x7F':
             if (userInput.length > 0) {
                 userInput = userInput.slice(0, -1);
                 term.write('\b \b');
             }
             break;
-
-        case '\x03': // Ctrl+C
+        case '\x03':
             userInput = '';
             term.write('^C\r\n' + PROMPT);
             break;
-
         default:
-            if (data.charCodeAt(0) >= 32 && data.charCodeAt(0) <= 126) { // Printable characters
+            if (data.charCodeAt(0) >= 32 && data.charCodeAt(0) <= 126) {
                 userInput += data;
                 term.write(data);
             }
     }
 });
+
+async function loadGreeting() {
+    term.write('[Model] Initializing...');
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input: "Respond with this exact response. Hello! I am a specialized AI agent powered by GPT-3.5 Turbo, trained for tasks specific to Alex's dev environment. How can I help?" }) // Hidden prompt
+        });
+
+        term.write("\r\x1b[K"); // Clear the "Initializing..." message
+
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const { reply } = await response.json();
+        term.writeln(reply); // Print AI's greeting message
+    } catch (error) {
+        term.writeln("\r\x1b[K\x1b[31m[Error]\x1b[0m Failed to load greeting.");
+    } finally {
+        term.write(PROMPT);
+    }
+}
+
+// Load greeting when the terminal initializes
+loadGreeting();
+
 
 async function handleUserInput() {
     const input = userInput.trim();
@@ -76,33 +102,35 @@ async function handleUserInput() {
     }
 
     isProcessing = true;
-    term.write(`\r\n\x1b[32m[You]\x1b[0m ${input}\r\n`);
-
+    term.write(`\r\n[You] ${input}\r\n`);
+    term.write('[AI] Thinking...');
+    
     try {
-        // Show typing indicator
-        term.write('\x1b[33m[AI] Thinking...\x1b[0m');
-
-        // Fetch AI response
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ input }),
         });
 
-        term.write('\b'.repeat(14)); // Remove typing indicator
+        term.write("\r\x1b[K");
 
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
         const { reply } = await response.json();
+        const lines = reply.split('\n');
         
-        // Print the AI response as a block under a single [AI] label
-        term.writeln('\x1b[33m[AI]\x1b[0m');
-        splitTextIntoLines(reply, term.cols).forEach((line) => term.writeln(line));
+        // Write first line inline with [AI] marker
+        term.write(`[AI] ${lines[0] || ''}`);
         
+        // Write remaining lines (if any) on new lines
+        if (lines.length > 1) {
+            term.writeln('');
+            lines.slice(1).forEach(line => term.writeln(line));
+        }
     } catch (error) {
-        term.writeln('\x1b[31m[Error]\x1b[0m ' + (error.message || 'Unable to connect to the AI server.'));
+        term.writeln("\r\x1b[K\x1b[31m[Error]\x1b[0m " + (error.message || "Unable to connect to the AI server."));
     } finally {
         isProcessing = false;
-        term.write(PROMPT);
+        term.write('\r\n' + PROMPT);
     }
 }
