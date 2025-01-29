@@ -96,7 +96,7 @@ async function loadGreeting() {
  * @param {string} text - The text to type out.
  * @param {number} delay - Typing speed in milliseconds (default 50ms).
  */
-async function typeText(text, delay = 50) {
+async function typeText(text, delay = 20) {
     for (const char of text) {
         term.write(char);
         await new Promise(resolve => setTimeout(resolve, delay)); // Simulate typing delay
