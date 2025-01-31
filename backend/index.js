@@ -12,7 +12,7 @@ app.use(express.json());
 
 const allowedOrigins = [
     "http://localhost:5500",
-    "https://ai-agent-frontend-86vq.onrender.com",
+    "https://ai-agent-1-vmje.onrender.com",
     "https://www.alexmay.dev"
 ];
 
