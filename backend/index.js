@@ -35,19 +35,39 @@ app.get("/", (req, res) => {
 });
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const assistantId = "asst_zGKJgMXKH8WgRNumHrCRTpMS"; // Your custom assistant ID
 
 app.post("/api/chat", async (req, res) => {
     try {
         const userInput = req.body.input.trim();
-        const completion = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                { role: "system", content: "You are a helpful assistant." },
-                { role: "user", content: userInput },
-            ],
+
+        // Create a new thread
+        const thread = await openai.beta.threads.create();
+
+        // Add message to the thread
+        await openai.beta.threads.messages.create(thread.id, {
+            role: "user",
+            content: userInput,
         });
 
-        res.json({ reply: completion.choices[0].message.content });
+        // Run the assistant on the thread
+        const run = await openai.beta.threads.runs.create(thread.id, {
+            assistant_id: assistantId,
+        });
+
+        // Wait for the response
+        let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        while (runStatus.status !== "completed") {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait before checking again
+            runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        }
+
+        // Retrieve the latest message
+        const messages = await openai.beta.threads.messages.list(thread.id);
+        const lastMessage = messages.data.find(msg => msg.role === "assistant");
+
+        res.json({ reply: lastMessage ? lastMessage.content[0].text.value : "No response received." });
+
     } catch (error) {
         console.error("OpenAI API error:", error);
         res.status(500).json({ reply: "Sorry, something went wrong." });
