@@ -80,7 +80,7 @@ async function loadGreeting() {
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input: "Respond with this exact response. Hello I'm a GPT-3.5 Turbo-powered AI agent built to assist with Alex’s dev environment and side projects. Ask me about Alex’s resume (work experience, skills) or my own architecture (Show agent architecture). Anything else just ask!" }) // Hidden prompt
+            body: JSON.stringify({ input: "Respond with this exact response. Hello I'm a GPT-3.5 Turbo-powered AI agent built to assist with Alex’s dev environment. Ask me about Alex’s resume (work experience, skills) or my own architecture (Show agent architecture). Anything else just ask!" }) // Hidden prompt
         });
 
         term.write("\r\x1b[K"); // Clear the "Initializing..." message
