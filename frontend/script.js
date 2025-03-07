@@ -1,6 +1,6 @@
 const INTRO_PROMPT =''
 const PROMPT = '> ';
-const API_URL = 'https://ai-agent-usap.onrender.com/api/chat';
+const API_URL = '__API_URL__';
 
 const terminalContainer = document.getElementById('terminal-container');
 const { Terminal } = window;
