@@ -18,9 +18,9 @@ cd ai-agent
 ### 2. Set Up Environment Variables
 - Create a `.env` file in the **root directory (`ai-agent/`)**.
 - Add the following environment variables:
-  ```sh
-  OPENAI_API_KEY=your_openai_api_key_here
-  API_URL=http://localhost:3000/api/chat
+```sh
+OPENAI_API_KEY=your_openai_api_key_here
+API_URL=http://localhost:3000/api/chat
 ```
 
 ### 3. Start the Application with Docker Compose
